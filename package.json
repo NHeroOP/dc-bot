@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "dev": "nodemon index.js"
   },
   "author": "",
   "license": "ISC",
@@ -11,6 +11,7 @@
   "dependencies": {
     "@discordjs/rest": "^2.3.0",
     "discord-api-types": "^0.37.84",
+    "discord-player": "^6.6.8",
     "discord.js": "^14.15.2",
     "dotenv": "^16.4.5"
   },
