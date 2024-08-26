@@ -1,23 +1,19 @@
 {
-  "name": "dc-bot",
+  "name": "bot",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "dev": "nodemon index.js"
+    "start": "node src/index.js"
   },
+  "type": "module",
+  "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@discordjs/rest": "^2.3.0",
-    "@discordjs/voice": "^0.17.0",
-    "discord-api-types": "^0.37.84",
-    "discord-player": "^6.6.8",
-    "discord.js": "^14.15.2",
-    "dotenv": "^16.4.5",
-    "mediaplex": "^0.0.9"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.0"
+    "@google/generative-ai": "^0.17.1",
+    "axios": "^1.7.5",
+    "discord.js": "^14.15.3",
+    "dotenv": "^16.4.5"
   }
 }
