@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, Attachment, AttachmentBuilder, PermissionFlagsBits } from "discord.js";
+import { ApplicationCommandOptionType, AttachmentBuilder, EmbedBuilder, PermissionFlagsBits } from "discord.js";
 import "dotenv/config.js"
 import axios from 'axios';
 import { getEnhancedPrompt } from "../../utils/index.js";
@@ -89,7 +89,7 @@ export default {
     let response;
     try {
       if (!type || type === "normal") {
-        response = await axios.post("https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell", { "inputs": prompt }, {
+        response = await axios.post("https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell", { "inputs": prompt ? prompt : originalPrompt }, {
           headers: {
             "Authorization": `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
             'Content-Type': 'application/json',
@@ -98,7 +98,7 @@ export default {
         })
       }
       else if (type === "realism") {
-        response = await axios.post("https://api-inference.huggingface.co/models/XLabs-AI/flux-RealismLora", { "inputs": prompt }, {
+        response = await axios.post("https://api-inference.huggingface.co/models/XLabs-AI/flux-RealismLora", { "inputs": prompt ? prompt : originalPrompt }, {
           headers: {
             "Authorization": `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
             'Content-Type': 'application/json',
@@ -109,7 +109,7 @@ export default {
       } 
       else if (type === "anime") {
         
-        response = await axios.post("https://api-inference.huggingface.co/models/dataautogpt3/FLUX-SyntheticAnime", { "inputs": `${prompt} VHS quality` }, {
+        response = await axios.post("https://api-inference.huggingface.co/models/dataautogpt3/FLUX-SyntheticAnime", { "inputs": `${prompt ? prompt : originalPrompt} VHS quality` }, {
           headers: {
             "Authorization": `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
             'Content-Type': 'application/json',
@@ -123,7 +123,15 @@ export default {
 
       clearInterval(updateInterval);
 
-      interaction.editReply({ content: `Here's your generated image with the prompt: \n___***Original Prompt***___: *${originalPrompt}*\n___***Enhanced Prompt***___: **${prompt}**\n`, files: [attachment] });
+      const embed = new EmbedBuilder()
+        .setTitle("Image Generator")
+        .setDescription("Generates an image using prompt")
+        .setColor("Random")
+        .addFields({ name: "Orignal Prompt", value: `\`\`\`${originalPrompt}\`\`\`` })
+        .addFields({ name: "Enhanced Prompt", value: `\`\`\`${prompt ? prompt : "Nil"}\`\`\`` })
+        .setImage("attachment://image.png")
+
+      interaction.editReply({content: `<@${interaction.user.id}>`, embeds: [embed], files: [attachment] });
       
     } catch (error) {
       console.log(`An error occured ${error}`);
@@ -132,3 +140,6 @@ export default {
     }
   }
 }
+
+
+
