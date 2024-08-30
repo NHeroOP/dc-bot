@@ -51,7 +51,7 @@ export default {
 
       const embed = new EmbedBuilder()
         .addFields({ name: " ", value: `✅ ***${targetUser.user.tag} has been kicked***` })
-        .addFields({ name: "Reason", value: `***${reason}***` })
+        .addFields({ name: " ", value: `Reason: ***${reason}***` })
         .setColor("#57F287")
       await interaction.editReply({embeds: [embed]});
     }
