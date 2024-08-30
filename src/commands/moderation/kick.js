@@ -1,4 +1,4 @@
-import pkg from "discord.js";
+import pkg, { EmbedBuilder } from "discord.js";
 const { ApplicationCommandOptionType, Client, Interaction,  PermissionFlagsBits } = pkg;
 
 
@@ -16,13 +16,19 @@ export default {
     await interaction.deferReply()
     const targetUser = await interaction.guild.members.fetch(targetUserId);
 
+    let unableMsg = ""
+    const unableEmbed = new EmbedBuilder()
+      .addFields({ value: `\`\`\`${unableMsg}\`\`\`` })
+
     if (!targetUser) {
-      await interaction.editReply("User not found");
+      unableMsg = "User not found"
+      await interaction.editReply({embeds: [unableEmbed]});
       return;
     }
 
     if (targetUser.id === interaction.guild.ownerId) {
-      await interaction.editReply("You cannot kick the owner of the server");
+      unableMsg = "You cannot kick the owner of the server";
+      await interaction.editReply({embeds: [unableEmbed]});
       return;
     }
 
@@ -33,29 +39,36 @@ export default {
     const botRolePosition = interaction.guild.members.me.roles.highest.position;
 
     if (targetUserRolePosition >= requestedUserRolePosition) {
-      await interaction.editReply("You cannot kick a user with equal or higher role than you");
+      unableMsg = "You cannot kick a user with equal or higher role than you"
+      await interaction.editReply({embeds: [unableEmbed]});
       return;
     }
 
     if (targetUserRolePosition >= botRolePosition) {
-      await interaction.editReply("I cannot kick a user with equal or higher role than me");
+      unableMsg = "I cannot kick a user with equal or higher role than me";
+      await interaction.editReply({embeds: [unableEmbed]});
       return;
     }
 
     try {
-      await targetUser.kick(reason);
-      await interaction.editReply(`${targetUser.user.tag} has been kicked from the server with reason: ${reason}`);
+      await targetUser.kick( reason );
+
+      const embed = new EmbedBuilder()
+        .addFields({ value: `\`\`\`${targetUser.user.tag} has been kicked\`\`\`` })
+        .addFields({name: "Reason", value: `\`\`\`${reason}\`\`\``})
+      await interaction.editReply({embeds: [embed]});
     }
     catch (error) {
-      console.log("An error occured when kicking", error);
-      
+      unableMsg = "An error occured when kicking"
+      console.log(unableMsg, error);
+      interaction.editReply({embeds: [unableEmbed]});
     }
     
   },
 
 
   name: "kick",
-  description: "Kicks a memeber from the server",
+  description: "kicks a memeber from the server",
   // devOnly: Boolean,
   // testOnly: Boolean,
   options: [

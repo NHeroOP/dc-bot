@@ -1,4 +1,4 @@
-import pkg from "discord.js";
+import pkg, { EmbedBuilder } from "discord.js";
 const { ApplicationCommandOptionType, Client, Interaction,  PermissionFlagsBits } = pkg;
 
 
@@ -16,13 +16,19 @@ export default {
     await interaction.deferReply()
     const targetUser = await interaction.guild.members.fetch(targetUserId);
 
+    let unableMsg = ""
+    const unableEmbed = new EmbedBuilder()
+      .addFields({ value: `\`\`\`${unableMsg}\`\`\`` })
+
     if (!targetUser) {
-      await interaction.editReply("User not found");
+      unableMsg = "User not found"
+      await interaction.editReply({embeds: [unableEmbed]});
       return;
     }
 
     if (targetUser.id === interaction.guild.ownerId) {
-      await interaction.editReply("You cannot ban the owner of the server");
+      unableMsg = "You cannot ban the owner of the server";
+      await interaction.editReply({embeds: [unableEmbed]});
       return;
     }
 
@@ -33,22 +39,29 @@ export default {
     const botRolePosition = interaction.guild.members.me.roles.highest.position;
 
     if (targetUserRolePosition >= requestedUserRolePosition) {
-      await interaction.editReply("You cannot ban a user with equal or higher role than you");
+      unableMsg = "You cannot ban a user with equal or higher role than you"
+      await interaction.editReply({embeds: [unableEmbed]});
       return;
     }
 
     if (targetUserRolePosition >= botRolePosition) {
-      await interaction.editReply("I cannot ban a user with equal or higher role than me");
+      unableMsg = "I cannot ban a user with equal or higher role than me";
+      await interaction.editReply({embeds: [unableEmbed]});
       return;
     }
 
     try {
       await targetUser.ban({ reason });
-      await interaction.editReply(`${targetUser.user.tag} has been banned from the server with reason: ${reason}`);
+
+      const embed = new EmbedBuilder()
+        .addFields({ value: `\`\`\`${targetUser.user.tag} has been banned\`\`\`` })
+        .addFields({name: "Reason", value: `\`\`\`${reason}\`\`\``})
+      await interaction.editReply({embeds: [embed]});
     }
     catch (error) {
-      console.log("An error occured when banning", error);
-      
+      unableMsg = "An error occured when banning"
+      console.log(unableMsg, error);
+      interaction.editReply({embeds: [unableEmbed]});
     }
     
   },
