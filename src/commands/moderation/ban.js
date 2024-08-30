@@ -19,6 +19,7 @@ export default {
     let unableMsg = ""
     const unableEmbed = new EmbedBuilder()
       .addFields({ value: `\`\`\`${unableMsg}\`\`\`` })
+      .setColor("RED")
 
     if (!targetUser) {
       unableMsg = "User not found"
@@ -55,7 +56,8 @@ export default {
 
       const embed = new EmbedBuilder()
         .addFields({ value: `\`\`\`${targetUser.user.tag} has been banned\`\`\`` })
-        .addFields({name: "Reason", value: `\`\`\`${reason}\`\`\``})
+        .addFields({ name: "Reason", value: `\`\`\`${reason}\`\`\`` })
+        .setColor("GREEN")
       await interaction.editReply({embeds: [embed]});
     }
     catch (error) {
