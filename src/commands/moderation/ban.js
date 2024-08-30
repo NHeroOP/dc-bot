@@ -1,5 +1,9 @@
 import pkg, { EmbedBuilder } from "discord.js";
-const { ApplicationCommandOptionType, Client, Interaction,  PermissionFlagsBits } = pkg;
+const { ApplicationCommandOptionType, Client, Interaction, PermissionFlagsBits } = pkg;
+
+const embeder = (msg) => {
+  return new EmbedBuilder().setColor("#ED4245").addFields({name: " ", value: `❌ ***${msg}***` })
+}
 
 
 export default {
@@ -16,20 +20,13 @@ export default {
     await interaction.deferReply()
     const targetUser = await interaction.guild.members.fetch(targetUserId);
 
-    let unableMsg = ""
-    const unableEmbed = new EmbedBuilder()
-      .addFields({ value: `\`\`\`${unableMsg}\`\`\`` })
-      .setColor("RED")
-
     if (!targetUser) {
-      unableMsg = "User not found"
-      await interaction.editReply({embeds: [unableEmbed]});
+      await interaction.editReply({embeds: [embeder("User not found")]});
       return;
     }
 
     if (targetUser.id === interaction.guild.ownerId) {
-      unableMsg = "You cannot ban the owner of the server";
-      await interaction.editReply({embeds: [unableEmbed]});
+      await interaction.editReply({embeds: [embeder("You cannot ban the owner of the server")]});
       return;
     }
 
@@ -40,14 +37,12 @@ export default {
     const botRolePosition = interaction.guild.members.me.roles.highest.position;
 
     if (targetUserRolePosition >= requestedUserRolePosition) {
-      unableMsg = "You cannot ban a user with equal or higher role than you"
-      await interaction.editReply({embeds: [unableEmbed]});
+      await interaction.editReply({embeds: [embeder("You cannot ban a user with equal or higher role than you")]});
       return;
     }
 
     if (targetUserRolePosition >= botRolePosition) {
-      unableMsg = "I cannot ban a user with equal or higher role than me";
-      await interaction.editReply({embeds: [unableEmbed]});
+      await interaction.editReply({embeds: [embeder("I cannot ban a user with equal or higher role than me")]});
       return;
     }
 
@@ -55,9 +50,9 @@ export default {
       await targetUser.ban({ reason });
 
       const embed = new EmbedBuilder()
-        .addFields({ value: `\`\`\`${targetUser.user.tag} has been banned\`\`\`` })
-        .addFields({ name: "Reason", value: `\`\`\`${reason}\`\`\`` })
-        .setColor("GREEN")
+        .addFields({ name: " ", value: `✅ ***${targetUser.user.tag} has been banned***` })
+        .addFields({ name: "Reason", value: `***${reason}***` })
+        .setColor("#57F287")
       await interaction.editReply({embeds: [embed]});
     }
     catch (error) {
